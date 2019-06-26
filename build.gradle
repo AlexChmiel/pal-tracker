@@ -35,3 +35,9 @@ bootRun.environment([
 test.environment([
         "WELCOME_MESSAGE": "Hello from test",
 ])
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
