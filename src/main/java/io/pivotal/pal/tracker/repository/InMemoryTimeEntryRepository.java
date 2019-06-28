@@ -6,51 +6,88 @@ package io.pivotal.pal.tracker.repository;
 import io.pivotal.pal.tracker.data.TimeEntry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class InMemoryTimeEntryRepository implements TimeEntryRepository{
 
-    private Map<Long, TimeEntry> data = new HashMap<>();
+    protected Map<Long, TimeEntry> data = new HashMap<>();
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;
 
     public TimeEntry find (Long id) {
-        return getStore().get(id);
-        //return timeEntryRepository.find(id);
+        TimeEntry t = getStore().get(id);
+        if(t != null){
+            return t;
+        }
+        return null;
     }
 
     @Override
     public TimeEntry create(TimeEntry timeEntry) {
-        //return timeEntryRepository.create(timeEntry);
-         getStore().putIfAbsent(timeEntry.getId(), timeEntry);
-         return getStore().get(timeEntry.getId());
+         Long id = timeEntry.getId();
+         if(id == 0L && !getStore().containsKey(1L)){
+             id = 1L;
+         } else{
+             Long max = Collections.max(getStore().keySet());
+             id = max + 1L;
+         }
+         timeEntry.setId(id);
+         getStore().put(id, timeEntry);
+         return getStore().get(id);
     }
 
     @Override
-    public void delete(Long id) {
-        getStore().remove(id);
+    public boolean delete(Long id) {
+        if(find(id) != null){
+            getStore().put(id, null);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public TimeEntry update(Long id, TimeEntry timeEntry) {
-        TimeEntry obj = getStore().get(id);
-        getStore().replace(id, timeEntry);
-        return find(id);
+        if(getStore().containsKey(id)){
+            timeEntry.setId(id);
+            getStore().put(id, timeEntry);
+            return getStore().get(id);
+        }
+        return null;
     }
 
     @Override
     public List<TimeEntry> list() {
        List<TimeEntry> timeEntryList = new ArrayList<>();
-       getStore().forEach((k,v) -> timeEntryList.add(v));
+       Map<Long, TimeEntry> map = getStore();
+       for(Map.Entry<Long,TimeEntry> record: map.entrySet() ){
+           if(record.getValue() != null){
+               timeEntryList.add(record.getValue());
+           }
+       }
+
        return timeEntryList;
     }
 
     @SuppressWarnings("UnsafeOperation")
     private Map<Long, TimeEntry> getStore(){
         return this.data;
+    }
+
+    @Override
+    public String value() {
+        return null;
+    }
+
+    @Override
+    public Class<? extends Annotation> annotationType() {
+        return null;
     }
 }

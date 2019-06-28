@@ -3,15 +3,11 @@
  */
 package io.pivotal.pal.tracker.data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
 public class TimeEntry {
 
-    @Id
     private long id;
     private long projectId;
     private long userId;
@@ -41,6 +37,9 @@ public class TimeEntry {
     }
 
     public void setId(long id) {
+        if (id == 0L){
+            this.id = 1L;
+        }
         this.id = id;
     }
 
@@ -81,8 +80,7 @@ public class TimeEntry {
         if (this == o) return true;
         if (!(o instanceof TimeEntry)) return false;
         TimeEntry timeEntry = (TimeEntry) o;
-        return id == timeEntry.id &&
-                projectId == timeEntry.projectId &&
+        return  projectId == timeEntry.projectId &&
                 userId == timeEntry.userId &&
                 hours == timeEntry.hours &&
                 Objects.equals(date, timeEntry.date);
@@ -90,7 +88,7 @@ public class TimeEntry {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, projectId, userId, date, hours);
+        return Objects.hash(projectId, userId, date, hours);
     }
     /*  public void setList(List<TimeEntry> timeEntries){
         this.list = timeEntries;
