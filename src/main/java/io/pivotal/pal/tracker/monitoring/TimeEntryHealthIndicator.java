@@ -21,6 +21,7 @@ public class TimeEntryHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
+        //comment
         Health.Builder builder = new Health.Builder();
         if (timeEntryRepo.list().size() < MAX_TIME_ENTRIES){
             builder.up();
