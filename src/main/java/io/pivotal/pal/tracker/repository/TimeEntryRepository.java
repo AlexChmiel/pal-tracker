@@ -5,14 +5,13 @@ package io.pivotal.pal.tracker.repository;
 
 import io.pivotal.pal.tracker.data.TimeEntry;
 
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
-public interface TimeEntryRepository extends Repository {
+public interface TimeEntryRepository {
     TimeEntry find(Long id);
     TimeEntry create(TimeEntry timeEntry);
     TimeEntry update(Long id, TimeEntry timeEntry);
     List<TimeEntry> list();
-    boolean delete(Long id);
+    void delete(Long id);
 
 }
