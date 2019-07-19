@@ -21,7 +21,6 @@ public class TimeEntryHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-    // Report status of UP as long as number of entries in DB < 5
         Health.Builder builder = new Health.Builder();
         if (timeEntryRepo.list().size() < MAX_TIME_ENTRIES){
             builder.up();
